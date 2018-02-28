@@ -1,0 +1,77 @@
+<apex:page standardstylesheets="false" showheader="false" sidebar="false">
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js" />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/js/select2.min.js"/>
+    <apex:includeScript value="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" />
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" media="screen" />    
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css" rel="stylesheet" media="screen" />        
+    <div class="form-group col-md-12">
+        <select id="one" multiple="multiple" class="select form-control col-md-12">
+            <option value="WY">Wyoming</option>
+            <option value="AL">Alabama</option>
+            <option value="Nagpur">Nagpur</option>
+        </select>
+        </div>
+         <button type="button" class="btn btn-success">Success</button>
+    <script>
+        $(document).ready(function(key,value){
+            $("#one").select2({ 
+                 placeholder: "Enter Values",
+                 ajax: {
+                    url: "/apex/GetJson",
+                   dataType: 'json',
+                   delay: 250,
+                   data: function (params) {
+                     return {
+                       q: params.term, // search term
+                       page: params.page,
+                     };
+                   },
+                   error: function (jqXHR, status, error) {
+                       console.log('Error-->');
+                       return { results: [] }; // Return dataset to load after error
+                   },
+                   processResults: function (data, params) {
+                     // parse the results into the format expected by Select2.
+                     // since we are using custom formatting functions we do not need to
+                     // alter the remote JSON data
+                     params.page = params.page || 1;
+                   // you should map the id and text attributes on version 4.0
+                   var select2Data = $.map(data, function (obj) {
+                       obj.id = obj.Id;
+                       obj.text = obj.Name;
+                       return obj;
+                   });
+                   return {
+                       results: select2Data
+                   };
+                   },
+                   cache: true
+                 },
+                 escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+                 minimumInputLength: 3,
+                 width:'100%',
+                 margin:'8px',
+               }).on("select2:close",function() {
+                 });
+           
+            
+            function formatSelection(item) {
+          // return selection template
+          if(item.id==null){
+              return '';
+          }
+           return '<table style="width:100%;"><tr><td style="width:10%"><span style="padding-right: 2%;">' + item.Code__c + '</span></td><td><span style="margin-left: 2%;">' + item.Footnote__c+'</span></td><td style="width: 10%;"><span>'+item.Status__c+'</span></td></tr></table>'; 
+         }
+            
+            
+        });
+        
+        
+        
+        
+        
+        
+    </script>
+</apex:page>

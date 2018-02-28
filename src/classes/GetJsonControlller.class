@@ -1,0 +1,19 @@
+public class GetJsonControlller{
+public string templateString {set;get;}
+    public GetJsonControlller(){
+    }
+    
+    public void searchTemplate(){
+    try{
+    
+        String searchString = ApexPages.currentPage().getParameters().get('q');
+        system.debug('value= '+searchString);
+        searchString = '%'+searchString+'%';
+        List<account> acList = [select id,name from account where name like :searchString ];
+        templateString =JSON.serializepretty(acList);
+        }catch(exception ex){
+            templateString ='';
+        }
+        
+    }
+}
